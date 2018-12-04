@@ -1,0 +1,26 @@
+=== Docker Plain
+
+==== Create Docker Image
+[source,bash]
+----
+docker build -t tdlabs/java-docker-plain .
+----
+
+==== Run Docker Container from Image
+
+[source,bash]
+----
+docker run -it tdlabs/java-docker-plain:latest
+----
+
+Expose port...
+[source,bash]
+----
+docker run -it -p 18080:8080 tdlabs/java-docker-plain:latest
+----
+
+Configure with environment variables
+[source,bash]
+----
+docker run -it -p 18080:8080 -e ACME_GREETING=Huhu tdlabs/java-docker-plain:latest
+----

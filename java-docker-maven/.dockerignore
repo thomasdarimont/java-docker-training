@@ -1,0 +1,5 @@
+# By default exclude everything
+*
+
+# Include jar file
+!/target/*.jar
