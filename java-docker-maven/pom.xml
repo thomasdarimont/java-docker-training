@@ -5,7 +5,7 @@
 
     <groupId>com.github.thomasdarimont.training</groupId>
     <artifactId>java-docker-maven</artifactId>
-    <version>0.0.1.0-SNAPSHOT</version>
+    <version>0.0.1.${revision}</version>
     <packaging>jar</packaging>
 
     <name>java-docker-maven</name>
@@ -23,7 +23,9 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
 
-        <docker-maven-plugin>0.27.2</docker-maven-plugin>
+        <revision>0-SNAPSHOT</revision>
+
+        <docker-maven-plugin.version>0.27.2</docker-maven-plugin.version>
         <docker-maven-plugin.debug>false</docker-maven-plugin.debug>
     </properties>
 
@@ -31,6 +33,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
         <dependency>
@@ -85,8 +92,13 @@
                     <verbose>${docker-maven-plugin.debug}</verbose>
                     <images>
                         <image>
-                            <name>gitlab:5000/${project.artifactId}</name>
+                            <!--configure docker registry -->
+                            <name>gitlab:5000/training/${project.artifactId}</name>
                             <build>
+                                <args>
+                                    <APP_NAME>${project.name}</APP_NAME>
+                                    <APP_VERSION>${project.version}</APP_VERSION>
+                                </args>
                                 <tags>
                                     <tag>${project.version}</tag>
                                     <tag>${git.commit.id}</tag>

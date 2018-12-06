@@ -3,24 +3,57 @@
 ==== Create Docker Image
 [source,bash]
 ----
-docker build -t tdlabs/java-docker-plain .
+mvn clean verify docker:build
 ----
 
 ==== Run Docker Container from Image
 
 [source,bash]
 ----
-docker run -it tdlabs/java-docker-plain:latest
+docker run \
+  -it \
+  gitlab:5000/training/java-docker-maven:latest
 ----
 
 Expose port...
 [source,bash]
 ----
-docker run -it -p 18080:8080 tdlabs/java-docker-plain:latest
+docker run \
+  -it \
+  -p 18080:8080 \
+  gitlab:5000/training/java-docker-maven:latest
 ----
 
 Configure with environment variables
 [source,bash]
 ----
-docker run -it -p 18080:8080 -e ACME_GREETING=Huhu tdlabs/java-docker-plain:latest
+docker run \
+  -it \
+  -e REMOTE_DEBUG=1 \
+  -p 18080:8080 \
+  -p 18787:8787 \
+  gitlab:5000/training/java-docker-maven:latest
+----
+
+==== Push Docker image
+[source,bash]
+----
+docker push gitlab:5000/training/java-docker-maven
+----
+
+
+==== Run Image from Registry
+[source,bash]
+----
+
+# Remove existing images (pretent we don't have the image)
+docker rmi -f $(docker images -q gitlab:5000/training/java-docker-maven)
+
+# Fetch docker image from registry and run container
+docker run \
+  -it \
+  -e REMOTE_DEBUG=1 \
+  -p 18080:8080 \
+  -p 18787:8787 \
+  gitlab:5000/training/java-docker-maven:latest
 ----

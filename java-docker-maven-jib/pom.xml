@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.thomasdarimont.training</groupId>
-    <artifactId>java-docker-maven</artifactId>
+    <artifactId>java-docker-maven-jib</artifactId>
     <version>0.0.1.${revision}</version>
     <packaging>jar</packaging>
 
-    <name>java-docker-maven</name>
+    <name>java-docker-maven-jib</name>
     <description>Demo project for Spring Boot</description>
 
     <parent>
@@ -25,8 +25,7 @@
 
         <revision>0-SNAPSHOT</revision>
 
-        <docker-maven-plugin.version>0.27.2</docker-maven-plugin.version>
-        <docker-maven-plugin.debug>false</docker-maven-plugin.debug>
+        <jib-maven-plugin.version>0.10.1</jib-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -85,40 +84,24 @@
             </plugin>
 
             <plugin>
-                <groupId>io.fabric8</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>${docker-maven-plugin.version}</version>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>${jib-maven-plugin.version}</version>
                 <configuration>
-                    <verbose>${docker-maven-plugin.debug}</verbose>
-                    <images>
+                    <from>
                         <image>
-                            <!--configure docker registry -->
-                            <name>gitlab:5000/training/${project.artifactId}</name>
-                            <build>
-                                <args>
-                                    <APP_NAME>${project.name}</APP_NAME>
-                                    <APP_VERSION>${project.version}</APP_VERSION>
-                                </args>
-                                <tags>
-                                    <tag>${project.version}</tag>
-                                    <tag>${git.commit.id}</tag>
-                                </tags>
-                                <dockerFileDir>${project.basedir}/src/main/docker</dockerFileDir>
-                                <assembly>
-                                    <inline>
-                                        <files>
-                                            <file>
-                                                <source>
-                                                    ${project.build.directory}/${project.build.finalName}.${project.packaging}
-                                                </source>
-                                            </file>
-                                        </files>
-                                    </inline>
-                                </assembly>
-                            </build>
+                            gcr.io/distroless/java@sha256:8c1769cb253bdecc257470f7fba05446a55b70805fa686f227a11655a90dfe9e
                         </image>
-                    </images>
+                    </from>
+                    <to>
+                        <image>
+                            gitlab:5000/training/${project.artifactId}
+                        </image>
+                    </to>
+                    <allowInsecureRegistries>true</allowInsecureRegistries>
                 </configuration>
+
+
             </plugin>
 
         </plugins>

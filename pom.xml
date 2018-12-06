@@ -11,5 +11,6 @@
     <modules>
        <module>java-docker-plain</module>
        <module>java-docker-maven</module>
+        <module>java-docker-maven-jib</module>
     </modules>
 </project>

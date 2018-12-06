@@ -1,8 +1,7 @@
 package demo.todo;
 
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,19 +17,14 @@ import java.util.UUID;
 
 @SpringBootTest
 @Transactional
-@ContextConfiguration(initializers = TodoServiceWithDedicatedContainersIT.Initializer.class)
-class TodoServiceWithDedicatedContainersIT {
+@ContextConfiguration(initializers = TodoServiceIT.Initializer.class)
+class TodoServiceIT {
 
     private static PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("training/postgres-todo-testdb");
 
-    @BeforeEach
-    public void startDatabase() {
+    @BeforeAll
+    public static void initDatabase() {
         POSTGRES.start();
-    }
-
-    @AfterEach
-    public void stopDatabase() {
-        POSTGRES.stop();
     }
 
     @Autowired
@@ -69,10 +63,9 @@ class TodoServiceWithDedicatedContainersIT {
             // Use dynamic postgres container as datasource for tests.
 
             TestPropertyValues.of( //
-                    "spring.datasource.url=jdbc:tc:postgresql:11.1-alpine://localhost/test?TC_INITSCRIPT=db/data.sql",
+                    "spring.datasource.url=" + POSTGRES.getJdbcUrl(), //
                     "spring.datasource.username=" + POSTGRES.getUsername(), //
-                    "spring.datasource.password=" + POSTGRES.getPassword(), //
-                    "spring.datasource.driverClassName=org.testcontainers.jdbc.ContainerDatabaseDriver"
+                    "spring.datasource.password=" + POSTGRES.getPassword() //
             ).applyTo(applicationContext);
         }
     }

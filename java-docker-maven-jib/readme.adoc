@@ -3,7 +3,7 @@
 ==== Create Docker Image
 [source,bash]
 ----
-mvn clean verify docker:build
+mvn clean verify jib:build
 ----
 
 ==== Run Docker Container from Image
@@ -12,7 +12,7 @@ mvn clean verify docker:build
 ----
 docker run \
   -it \
-  gitlab:5000/training/java-docker-maven:latest
+  gitlab:5000/training/java-docker-maven-jib:latest
 ----
 
 Expose port...
@@ -20,8 +20,10 @@ Expose port...
 ----
 docker run \
   -it \
+  -d \
+  --name java-docker-maven-jib \
   -p 18080:8080 \
-  gitlab:5000/training/java-docker-maven:latest
+  gitlab:5000/training/java-docker-maven-jib:latest
 ----
 
 Configure with environment variables
@@ -29,16 +31,14 @@ Configure with environment variables
 ----
 docker run \
   -it \
-  -e REMOTE_DEBUG=1 \
   -p 18080:8080 \
-  -p 18787:8787 \
-  gitlab:5000/training/java-docker-maven:latest
+  gitlab:5000/training/java-docker-maven-jib:latest
 ----
 
 ==== Push Docker image
 [source,bash]
 ----
-docker push gitlab:5000/training/java-docker-maven
+docker push gitlab:5000/training/java-docker-maven-jib
 ----
 
 
@@ -47,13 +47,22 @@ docker push gitlab:5000/training/java-docker-maven
 ----
 
 # Remove existing images (pretent we don't have the image)
-docker rmi -f $(docker images -q gitlab:5000/training/java-docker-maven)
+docker rmi -f $(docker images -q gitlab:5000/training/java-docker-maven-jib)
 
 # Fetch docker image from registry and run container
 docker run \
   -it \
-  -e REMOTE_DEBUG=1 \
   -p 18080:8080 \
-  -p 18787:8787 \
-  gitlab:5000/training/java-docker-maven:latest
+  gitlab:5000/training/java-docker-maven-jib:latest
+----
+
+==== Distroless Java base image
+
+GoogleContainerTools https://github.com/GoogleContainerTools/distroless[distroless] java image
+[source,bash]
+----
+$ docker run  gcr.io/distroless/java@sha256:8c1769cb253bdecc257470f7fba05446a55b70805fa686f227a11655a90dfe9e -version
+openjdk version "1.8.0_181"
+OpenJDK Runtime Environment (build 1.8.0_181-8u181-b13-2~deb9u1-b13)
+OpenJDK 64-Bit Server VM (build 25.181-b13, mixed mode)
 ----
