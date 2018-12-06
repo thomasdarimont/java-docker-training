@@ -1,6 +1,12 @@
 === Docker Plain
 
-==== Create Docker Image
+==== Package App
+[source,bash]
+----
+mvn clean package
+----
+
+==== Build Docker Image
 [source,bash]
 ----
 docker build -t tdlabs/java-docker-plain .
